@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,6 +31,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void test2(View view) {
+        try {
+            FileInputStream fin = openFileInput("brad.txt");
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(fin));
+            String line = null;
+            while ( (line = reader.readLine()) != null){
+                Log.v("brad", line);
+            }
+            fin.close();
+        }catch (Exception e){
+            Log.v("brad", e.toString());
+        }
+
     }
     public void test3(View view) {
     }

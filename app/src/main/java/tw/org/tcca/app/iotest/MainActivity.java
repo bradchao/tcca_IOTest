@@ -3,7 +3,10 @@ package tw.org.tcca.app.iotest;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+
+import java.io.FileOutputStream;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -14,6 +17,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void test1(View view) {
+        try {
+            FileOutputStream fout =
+                    openFileOutput("brad.txt", MODE_PRIVATE);
+            fout.write("Hello, World".getBytes());
+            fout.flush();
+            fout.close();
+        }catch (Exception e){
+            Log.v("brad", e.toString());
+        }
     }
     public void test2(View view) {
     }

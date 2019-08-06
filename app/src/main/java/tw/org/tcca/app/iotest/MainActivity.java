@@ -18,6 +18,7 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.Volley;
 
@@ -120,6 +121,36 @@ public class MainActivity extends AppCompatActivity {
             fout.flush();
             fout.close();
             Log.v("brad", "save OK2");
+        }catch (Exception e){
+            Log.v("brad", e.toString());
+        }
+    }
+
+    public void test5(View view) {
+        MyInputStreamRequest request = new MyInputStreamRequest(Request.Method.GET,
+                "https://www.bradchao.com/img/about-image.jpg",
+                new Response.Listener<byte[]>() {
+                    @Override
+                    public void onResponse(byte[] response) {
+                        saveSDCard(response);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.v("brad", error.toString());
+            }
+        }, null);
+        requestQueue.add(request);
+    }
+
+    private void saveSDCard(byte[] data){
+        File file1 = new File(approot, "bradtcca.jpg");
+        try {
+            FileOutputStream fout = new FileOutputStream(file1);
+            fout.write(data);
+            fout.flush();
+            fout.close();
+            Log.v("brad", "save OK3");
         }catch (Exception e){
             Log.v("brad", e.toString());
         }

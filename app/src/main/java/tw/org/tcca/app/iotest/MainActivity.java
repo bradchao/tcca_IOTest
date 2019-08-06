@@ -19,7 +19,7 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity {
-    private File sdroot;
+    private File sdroot,approot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
     private void init(){
         sdroot = Environment.getExternalStorageDirectory();
         Log.v("brad", sdroot.getAbsolutePath());
+
+        approot = new File(sdroot, "Android/data/" + getPackageName());
+        if (!approot.exists()) approot.mkdirs();
     }
 
     @Override
@@ -85,7 +88,27 @@ public class MainActivity extends AppCompatActivity {
 
     }
     public void test3(View view) {
+        File file1 = new File(sdroot, "file1.txt");
+        try {
+            FileOutputStream fout = new FileOutputStream(file1);
+            fout.write("Hello, World".getBytes());
+            fout.flush();
+            fout.close();
+            Log.v("brad", "save OK1");
+        }catch (Exception e){
+            Log.v("brad", e.toString());
+        }
     }
     public void test4(View view) {
+        File file1 = new File(approot, "file1.txt");
+        try {
+            FileOutputStream fout = new FileOutputStream(file1);
+            fout.write("Hello, World".getBytes());
+            fout.flush();
+            fout.close();
+            Log.v("brad", "save OK2");
+        }catch (Exception e){
+            Log.v("brad", e.toString());
+        }
     }
 }

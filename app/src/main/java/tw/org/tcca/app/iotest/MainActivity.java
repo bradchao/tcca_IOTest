@@ -1,6 +1,7 @@
 package tw.org.tcca.app.iotest;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -12,14 +13,24 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.Volley;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private File sdroot,approot;
+    private RequestQueue requestQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init(){
+        requestQueue = Volley.newRequestQueue(this);
+
         sdroot = Environment.getExternalStorageDirectory();
         Log.v("brad", sdroot.getAbsolutePath());
 
@@ -111,4 +124,38 @@ public class MainActivity extends AppCompatActivity {
             Log.v("brad", e.toString());
         }
     }
+
+    private class MyInputStreamRequest extends Request<byte[]> {
+        private final Response.Listener<byte[]> mListener;
+        private Map<String,String> mParam;
+        private Map<String,String> responseHeaders;
+
+        public MyInputStreamRequest(int method, String url,
+                                    Response.Listener<byte[]> listener,
+                                    @Nullable Response.ErrorListener errorListener,
+                                    Map<String,String> param) {
+            super(method, url, errorListener);
+
+            mListener = listener;
+            mParam = param;
+        }
+
+        @Override
+        protected Map<String, String> getParams() throws AuthFailureError {
+            return mParam;
+        }
+
+        @Override
+        protected Response<byte[]> parseNetworkResponse(NetworkResponse response) {
+            responseHeaders = response.headers;
+            return Response.success(response.data, HttpHeaderParser.parseCacheHeaders(response));
+        }
+
+        @Override
+        protected void deliverResponse(byte[] response) {
+            mListener.onResponse(response);
+        }
+    }
+
+
 }
